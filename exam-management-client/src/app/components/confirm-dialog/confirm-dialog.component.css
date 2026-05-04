@@ -1,0 +1,35 @@
+.overlay {
+  align-items: center;
+  background: rgba(17, 24, 39, 0.58);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 1rem;
+  position: fixed;
+  z-index: 20;
+}
+
+.dialog {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.22);
+  max-width: 420px;
+  padding: 1.25rem;
+  width: 100%;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+p {
+  color: #4b5563;
+  margin: 0 0 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}

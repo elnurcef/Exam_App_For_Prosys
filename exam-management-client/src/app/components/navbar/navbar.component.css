@@ -1,0 +1,56 @@
+.topbar {
+  align-items: center;
+  background: #1f2937;
+  color: #ffffff;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 0.75rem 1.5rem;
+}
+
+.brand {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+nav a {
+  border-radius: 6px;
+  color: #d1d5db;
+  padding: 0.45rem 0.65rem;
+  text-decoration: none;
+}
+
+nav a.active,
+nav a:hover {
+  background: #374151;
+  color: #ffffff;
+}
+
+.profile {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 840px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile {
+    justify-content: space-between;
+    width: 100%;
+  }
+}

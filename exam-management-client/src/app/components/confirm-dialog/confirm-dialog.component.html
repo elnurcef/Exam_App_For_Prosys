@@ -1,0 +1,10 @@
+<div class="overlay" *ngIf="open">
+  <section class="dialog" role="dialog" aria-modal="true">
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
+    <div class="actions">
+      <button type="button" class="secondary" (click)="cancelled.emit()">Cancel</button>
+      <button type="button" class="danger" (click)="confirmed.emit()">{{ confirmText }}</button>
+    </div>
+  </section>
+</div>

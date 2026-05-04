@@ -1,0 +1,48 @@
+<section class="page-header">
+  <div>
+    <h1>Schedule Exam</h1>
+    <p class="muted">Choose a lesson, student, and date. The student class must match the lesson class.</p>
+  </div>
+  <a class="button secondary" routerLink="/exams">Back to Exams</a>
+</section>
+
+<div class="alert success" *ngIf="success">{{ success }}</div>
+<div class="alert error" *ngIf="error">{{ error }}</div>
+<div class="loading" *ngIf="loading">Loading lessons and students...</div>
+
+<section class="panel" *ngIf="!loading">
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="form-grid">
+      <label>
+        Lesson
+        <select formControlName="lessonId">
+          <option [ngValue]="null">Select lesson</option>
+          <option *ngFor="let lesson of lessons" [ngValue]="lesson.id">{{ lesson.code }} - {{ lesson.name }} / Class {{ lesson.classLevel }}</option>
+        </select>
+        <span class="field-error" *ngIf="form.controls.lessonId.touched && form.controls.lessonId.hasError('required')">Lesson is required.</span>
+      </label>
+
+      <label>
+        Student
+        <select formControlName="studentId">
+          <option [ngValue]="null">Select student</option>
+          <option *ngFor="let student of students" [ngValue]="student.id">{{ student.number }} - {{ student.firstName }} {{ student.lastName }} / Class {{ student.classLevel }}</option>
+        </select>
+        <span class="field-error" *ngIf="form.controls.studentId.touched && form.controls.studentId.hasError('required')">Student is required.</span>
+      </label>
+
+      <label>
+        Exam date
+        <input type="date" formControlName="examDate" />
+        <span class="field-error" *ngIf="form.controls.examDate.touched && form.controls.examDate.hasError('required')">Exam date is required.</span>
+      </label>
+    </div>
+
+    <div class="alert error" *ngIf="classMismatch">Student class must match lesson class.</div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="saving || classMismatch">{{ saving ? 'Scheduling...' : 'Schedule Exam' }}</button>
+      <button type="button" class="secondary" (click)="goToExams()">View Exams</button>
+    </div>
+  </form>
+</section>

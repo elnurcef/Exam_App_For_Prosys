@@ -1,0 +1,14 @@
+bin/
+obj/
+.vs/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+TestResults/
+logs/
+*.user
+
+node_modules/
+dist/
+.angular/
+npm-debug.log*

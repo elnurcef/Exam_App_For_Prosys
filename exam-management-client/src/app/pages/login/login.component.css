@@ -1,0 +1,23 @@
+.auth-panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin: 4rem auto;
+  max-width: 430px;
+  padding: 1.5rem;
+}
+
+h1 {
+  margin: 0 0 0.4rem;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.auth-link {
+  margin-bottom: 0;
+  text-align: center;
+}

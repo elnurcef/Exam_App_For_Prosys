@@ -1,0 +1,21 @@
+<section class="panel" *ngIf="exam">
+  <h2>Grade Exam</h2>
+  <p class="muted">{{ exam.lessonCode }} - {{ exam.lessonName }} / {{ exam.studentNumber }} - {{ exam.studentFullName }}</p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <label>
+      Grade
+      <input type="number" formControlName="grade" min="0" max="5" step="1" [readonly]="exam.status === 'Cancelled'" />
+      <span class="field-error" *ngIf="form.controls.grade.touched && form.controls.grade.hasError('required')">Grade is required.</span>
+      <span class="field-error" *ngIf="form.controls.grade.touched && (form.controls.grade.hasError('min') || form.controls.grade.hasError('max'))">Grade must be between 0 and 5.</span>
+      <span class="field-error" *ngIf="form.controls.grade.touched && form.controls.grade.hasError('integer')">Grade must be an integer.</span>
+    </label>
+
+    <div class="alert error" *ngIf="error">{{ error }}</div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="loading || exam.status === 'Cancelled'">{{ loading ? 'Saving...' : 'Save Grade' }}</button>
+      <button type="button" class="secondary" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</section>

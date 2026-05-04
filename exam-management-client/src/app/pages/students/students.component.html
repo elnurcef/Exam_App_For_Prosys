@@ -1,0 +1,71 @@
+<section class="page-header">
+  <div>
+    <h1>Students</h1>
+    <p class="muted">Student numbers are unique within your teacher account.</p>
+  </div>
+</section>
+
+<div class="alert success" *ngIf="success">{{ success }}</div>
+<div class="alert error" *ngIf="error">{{ error }}</div>
+
+<app-student-form
+  [student]="selectedStudent"
+  (saved)="onSaved($event)"
+  (cancelled)="selectedStudent = null">
+</app-student-form>
+
+<section class="panel" *ngIf="viewedStudent">
+  <div class="panel-header">
+    <h2>Student Details</h2>
+    <button type="button" class="secondary small" (click)="viewedStudent = null">Close</button>
+  </div>
+  <dl class="details">
+    <div><dt>Number</dt><dd>{{ viewedStudent.number }}</dd></div>
+    <div><dt>Name</dt><dd>{{ viewedStudent.firstName }} {{ viewedStudent.lastName }}</dd></div>
+    <div><dt>Class</dt><dd>{{ viewedStudent.classLevel }}</dd></div>
+  </dl>
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h2>Your Students</h2>
+    <button type="button" class="secondary small" (click)="load()" [disabled]="loading">Refresh</button>
+  </div>
+
+  <div class="loading" *ngIf="loading">Loading students...</div>
+  <div class="empty" *ngIf="!loading && students.length === 0">No students have been added yet.</div>
+
+  <div class="table-wrap" *ngIf="students.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Number</th>
+          <th>Name</th>
+          <th>Class</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of students">
+          <td><strong>{{ student.number }}</strong></td>
+          <td>{{ student.firstName }} {{ student.lastName }}</td>
+          <td>{{ student.classLevel }}</td>
+          <td class="table-actions">
+            <button type="button" class="secondary small" (click)="view(student)">View</button>
+            <button type="button" class="secondary small" (click)="edit(student)">Edit</button>
+            <button type="button" class="danger small" (click)="confirmDelete(student)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<app-confirm-dialog
+  [open]="!!pendingDelete"
+  title="Delete student"
+  [message]="'Delete student ' + (pendingDelete?.number ?? '') + '? Students with exam records are blocked by the API.'"
+  [confirmText]="deleting ? 'Deleting...' : 'Delete'"
+  (confirmed)="deleteConfirmed()"
+  (cancelled)="pendingDelete = null">
+</app-confirm-dialog>

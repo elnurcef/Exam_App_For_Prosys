@@ -1,0 +1,61 @@
+<section class="page-header">
+  <div>
+    <h1>Dashboard</h1>
+    <p class="muted" *ngIf="teacher$ | async as teacher">Welcome, {{ teacher.firstName }}. Your workspace shows only your data.</p>
+  </div>
+  <a class="button" routerLink="/exams/schedule">Schedule Exam</a>
+</section>
+
+<div class="alert error" *ngIf="error">{{ error }}</div>
+<div class="loading" *ngIf="loading">Loading dashboard...</div>
+
+<section class="stats" *ngIf="!loading">
+  <article>
+    <span>Lessons</span>
+    <strong>{{ lessons.length }}</strong>
+  </article>
+  <article>
+    <span>Students</span>
+    <strong>{{ students.length }}</strong>
+  </article>
+  <article>
+    <span>Scheduled Exams</span>
+    <strong>{{ scheduledCount }}</strong>
+  </article>
+  <article>
+    <span>Graded Exams</span>
+    <strong>{{ gradedCount }}</strong>
+  </article>
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h2>Recent Exams</h2>
+    <a routerLink="/exams/results">View results</a>
+  </div>
+
+  <div class="empty" *ngIf="!loading && recentExams.length === 0">No exams have been scheduled yet.</div>
+
+  <div class="table-wrap" *ngIf="recentExams.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Lesson</th>
+          <th>Student</th>
+          <th>Grade</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let exam of recentExams">
+          <td>{{ exam.examDate }}</td>
+          <td>{{ exam.lessonCode }} - {{ exam.lessonName }}</td>
+          <td>{{ exam.studentNumber }} - {{ exam.studentFullName }}</td>
+          <td>{{ exam.grade ?? '-' }}</td>
+          <td><span class="status" [class.cancelled]="exam.status === 'Cancelled'" [class.graded]="exam.status === 'Graded'">{{ exam.status }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

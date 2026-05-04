@@ -1,0 +1,39 @@
+<section class="panel">
+  <h2>{{ student ? 'Edit Student' : 'Add Student' }}</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="form-grid">
+      <label>
+        Number
+        <input type="number" formControlName="number" min="1" max="99999" />
+        <span class="field-error" *ngIf="form.controls.number.touched && form.controls.number.invalid">Number must be between 1 and 99999.</span>
+      </label>
+
+      <label>
+        First name
+        <input type="text" formControlName="firstName" maxlength="30" />
+        <span class="field-error" *ngIf="form.controls.firstName.touched && form.controls.firstName.hasError('required')">First name is required.</span>
+        <span class="field-error" *ngIf="form.controls.firstName.touched && form.controls.firstName.hasError('maxlength')">Maximum 30 characters.</span>
+      </label>
+
+      <label>
+        Last name
+        <input type="text" formControlName="lastName" maxlength="30" />
+        <span class="field-error" *ngIf="form.controls.lastName.touched && form.controls.lastName.hasError('required')">Last name is required.</span>
+        <span class="field-error" *ngIf="form.controls.lastName.touched && form.controls.lastName.hasError('maxlength')">Maximum 30 characters.</span>
+      </label>
+
+      <label>
+        Class
+        <input type="number" formControlName="classLevel" min="1" max="12" />
+        <span class="field-error" *ngIf="form.controls.classLevel.touched && form.controls.classLevel.invalid">Class level must be between 1 and 12.</span>
+      </label>
+    </div>
+
+    <div class="alert error" *ngIf="error">{{ error }}</div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="loading">{{ loading ? 'Saving...' : (student ? 'Update Student' : 'Create Student') }}</button>
+      <button type="button" class="secondary" *ngIf="student" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</section>

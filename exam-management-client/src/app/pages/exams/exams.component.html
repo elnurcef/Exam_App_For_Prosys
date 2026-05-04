@@ -1,0 +1,177 @@
+<section class="page-header">
+  <div>
+    <h1>Exams</h1>
+    <p class="muted">Schedule, edit, grade, cancel, and inspect exams for your own lessons and students.</p>
+  </div>
+  <a class="button" routerLink="/exams/schedule">Schedule Exam</a>
+</section>
+
+<div class="alert success" *ngIf="success">{{ success }}</div>
+<div class="alert error" *ngIf="error">{{ error }}</div>
+
+<section class="panel">
+  <h2>Filters</h2>
+  <form [formGroup]="filters" class="form-grid filters" (ngSubmit)="loadExams()">
+    <label>
+      Lesson
+      <select formControlName="lessonId">
+        <option [ngValue]="null">All lessons</option>
+        <option *ngFor="let lesson of lessons" [ngValue]="lesson.id">{{ lesson.code }} - {{ lesson.name }}</option>
+      </select>
+    </label>
+
+    <label>
+      Student
+      <select formControlName="studentId">
+        <option [ngValue]="null">All students</option>
+        <option *ngFor="let student of students" [ngValue]="student.id">{{ student.number }} - {{ student.firstName }} {{ student.lastName }}</option>
+      </select>
+    </label>
+
+    <label>
+      Class
+      <input type="number" formControlName="classLevel" min="1" max="12" />
+    </label>
+
+    <label>
+      Date
+      <input type="date" formControlName="examDate" />
+    </label>
+
+    <label>
+      Status
+      <select formControlName="status">
+        <option value="">All statuses</option>
+        <option value="Scheduled">Scheduled</option>
+        <option value="Graded">Graded</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+    </label>
+
+    <div class="actions align-end">
+      <button type="submit" class="secondary">Apply</button>
+      <button type="button" class="secondary" (click)="resetFilters()">Reset</button>
+    </div>
+  </form>
+</section>
+
+<section class="panel" *ngIf="viewedExam">
+  <div class="panel-header">
+    <h2>Exam Details</h2>
+    <button type="button" class="secondary small" (click)="viewedExam = null">Close</button>
+  </div>
+  <dl class="details">
+    <div><dt>Lesson</dt><dd>{{ viewedExam.lessonCode }} - {{ viewedExam.lessonName }}</dd></div>
+    <div><dt>Student</dt><dd>{{ viewedExam.studentNumber }} - {{ viewedExam.studentFullName }}</dd></div>
+    <div><dt>Class</dt><dd>{{ viewedExam.classLevel }}</dd></div>
+    <div><dt>Date</dt><dd>{{ viewedExam.examDate }}</dd></div>
+    <div><dt>Grade</dt><dd>{{ viewedExam.grade ?? '-' }}</dd></div>
+    <div><dt>Status</dt><dd>{{ viewedExam.status }}</dd></div>
+  </dl>
+</section>
+
+<section class="panel" *ngIf="selectedExam">
+  <div class="panel-header">
+    <h2>Edit Exam</h2>
+    <button type="button" class="secondary small" (click)="selectedExam = null">Close</button>
+  </div>
+
+  <form [formGroup]="editForm" (ngSubmit)="saveEdit()" novalidate>
+    <div class="form-grid">
+      <label>
+        Lesson
+        <select formControlName="lessonId">
+          <option [ngValue]="null">Select lesson</option>
+          <option *ngFor="let lesson of lessons" [ngValue]="lesson.id">{{ lesson.code }} - {{ lesson.name }} / Class {{ lesson.classLevel }}</option>
+        </select>
+      </label>
+
+      <label>
+        Student
+        <select formControlName="studentId">
+          <option [ngValue]="null">Select student</option>
+          <option *ngFor="let student of students" [ngValue]="student.id">{{ student.number }} - {{ student.firstName }} {{ student.lastName }} / Class {{ student.classLevel }}</option>
+        </select>
+      </label>
+
+      <label>
+        Exam date
+        <input type="date" formControlName="examDate" />
+      </label>
+    </div>
+
+    <div class="alert error" *ngIf="editClassMismatch">Student class must match lesson class.</div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="saving || editClassMismatch">{{ saving ? 'Saving...' : 'Save Changes' }}</button>
+      <button type="button" class="secondary" (click)="selectedExam = null">Cancel</button>
+    </div>
+  </form>
+</section>
+
+<app-exam-grade
+  [exam]="gradingExam"
+  (saved)="onGraded($event)"
+  (cancelled)="gradingExam = null">
+</app-exam-grade>
+
+<section class="panel">
+  <div class="panel-header">
+    <h2>Exam List</h2>
+    <button type="button" class="secondary small" (click)="loadExams()" [disabled]="loading">Refresh</button>
+  </div>
+
+  <div class="loading" *ngIf="loading">Loading exams...</div>
+  <div class="empty" *ngIf="!loading && exams.length === 0">No exams match the current filters.</div>
+
+  <div class="table-wrap" *ngIf="exams.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Lesson</th>
+          <th>Student</th>
+          <th>Class</th>
+          <th>Grade</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let exam of exams">
+          <td>{{ exam.examDate }}</td>
+          <td>{{ exam.lessonCode }} - {{ exam.lessonName }}</td>
+          <td>{{ exam.studentNumber }} - {{ exam.studentFullName }}</td>
+          <td>{{ exam.classLevel }}</td>
+          <td>{{ exam.grade ?? '-' }}</td>
+          <td><span class="status" [class.cancelled]="exam.status === 'Cancelled'" [class.graded]="exam.status === 'Graded'">{{ exam.status }}</span></td>
+          <td class="table-actions">
+            <button type="button" class="secondary small" (click)="view(exam)">View</button>
+            <button type="button" class="secondary small" (click)="edit(exam)" [disabled]="exam.status === 'Cancelled'">Edit</button>
+            <button type="button" class="secondary small" (click)="grade(exam)" [disabled]="exam.status === 'Cancelled'">Grade</button>
+            <button type="button" class="danger small" (click)="pendingCancel = exam" [disabled]="exam.status === 'Cancelled'">Cancel</button>
+            <button type="button" class="danger small" (click)="pendingDelete = exam" *ngIf="exam.status === 'Cancelled'">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<app-confirm-dialog
+  [open]="!!pendingCancel"
+  title="Cancel exam"
+  message="Cancel this exam? The record will stay visible in results."
+  confirmText="Cancel Exam"
+  (confirmed)="cancelExamConfirmed()"
+  (cancelled)="pendingCancel = null">
+</app-confirm-dialog>
+
+<app-confirm-dialog
+  [open]="!!pendingDelete"
+  title="Delete cancelled exam"
+  message="Hard delete this cancelled exam record?"
+  confirmText="Delete"
+  (confirmed)="deleteExamConfirmed()"
+  (cancelled)="pendingDelete = null">
+</app-confirm-dialog>

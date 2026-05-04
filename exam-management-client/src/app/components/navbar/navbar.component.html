@@ -1,0 +1,15 @@
+<header class="topbar" *ngIf="authService.isAuthenticated()">
+  <a class="brand" routerLink="/dashboard">Exam Management System</a>
+  <nav>
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/lessons" routerLinkActive="active">Lessons</a>
+    <a routerLink="/students" routerLinkActive="active">Students</a>
+    <a routerLink="/exams" routerLinkActive="active">Exams</a>
+    <a routerLink="/exams/schedule" routerLinkActive="active">Schedule</a>
+    <a routerLink="/exams/results" routerLinkActive="active">Results</a>
+  </nav>
+  <div class="profile" *ngIf="teacher$ | async as teacher">
+    <span>{{ teacher.firstName }} {{ teacher.lastName }}</span>
+    <button type="button" class="secondary small" (click)="logout()">Logout</button>
+  </div>
+</header>
